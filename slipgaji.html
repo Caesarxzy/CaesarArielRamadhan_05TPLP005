@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Slip Gaji</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Menu Slip Gaji</h1>
+
+<!-- Tombol Kembali ke Dashboard -->
+<button onclick="goToDashboard()">Kembali ke Dashboard</button>
+
+<table id="salaryTable">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>Jabatan</th>
+            <th>Gaji Pokok</th>
+            <th>Slip Gaji</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Data Slip Gaji akan ditambahkan di sini -->
+    </tbody>
+</table>
+
+<script>
+    // Data gaji untuk 15 orang
+    let salaryData = [
+        { name: "Adji", position: "Manager", basicSalary: 10000000 },
+        { name: "Ilyas", position: "Staff", basicSalary: 5000000 },
+        { name: "Gita", position: "Staff", basicSalary: 5000000 },
+        { name: "Fajar", position: "Supervisor", basicSalary: 8000000 },
+        { name: "Eka", position: "Staff", basicSalary: 5000000 },
+        { name: "Fajar", position: "Manager", basicSalary: 10000000 },
+        { name: "Prabowo", position: "Staff", basicSalary: 5000000 },
+        { name: "Hendra", position: "Supervisor", basicSalary: 8000000 },
+        { name: "Amin", position: "Staff", basicSalary: 5000000 },
+        { name: "Joko", position: "Staff", basicSalary: 5000000 },
+        { name: "Wasa", position: "Manager", basicSalary: 10000000 },
+        { name: "Jessica", position: "Staff", basicSalary: 5000000 },
+        { name: "Nina", position: "Supervisor", basicSalary: 8000000 },
+        { name: "Oka", position: "Staff", basicSalary: 5000000 },
+        { name: "Pina", position: "Staff", basicSalary: 5000000 }
+    ];
+
+    const salaryTable = document.getElementById('salaryTable').getElementsByTagName('tbody')[0];
+
+    // Fungsi untuk memperbarui tabel
+    function updateTable() {
+        salaryTable.innerHTML = '';
+        salaryData.forEach((person, index) => {
+            const row = salaryTable.insertRow();
+            row.insertCell().innerHTML = index + 1;
+            row.insertCell().innerHTML = person.name;
+            row.insertCell().innerHTML = person.position;
+            row.insertCell().innerHTML = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(person.basicSalary);
+            const slipButton = document.createElement('button');
+            slipButton.innerHTML = "Lihat Slip Gaji";
+            slipButton.addEventListener('click', function() {
+                alert(`Slip Gaji untuk ${person.name}\nJabatan: ${person.position}\nGaji Pokok: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(person.basicSalary)}`);
+            });
+            const actionCell = row.insertCell();
+            actionCell.appendChild(slipButton);
+        });
+    }
+
+    // Fungsi untuk mengarahkan ke dashboard
+    function goToDashboard() {
+        window.location.href = 'index.html'; // Ganti dengan URL dashboard Anda
+    }
+
+    updateTable();
+</script>
+
+</body>
+</html>

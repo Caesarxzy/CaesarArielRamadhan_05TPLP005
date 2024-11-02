@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Jabatan Perusahaan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"], button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        input[type="submit"]:hover, button:hover {
+            background-color: #45a049;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Data Jabatan Perusahaan</h1>
+
+<!-- Tombol Kembali ke Dashboard -->
+<button onclick="goToDashboard()">Kembali ke Dashboard</button>
+
+<table id="positionTable">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Kode Jabatan</th>
+            <th>Nama Jabatan</th>
+            <th>Deskripsi Jabatan</th>
+            <th>Periode Jabatan (Tahun)</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Data Jabatan akan ditambahkan di sini -->
+    </tbody>
+</table>
+
+<h2>Formulir Tambah/Edit Jabatan</h2>
+<form id="positionForm">
+    <input type="hidden" id="index" name="index" value="-1">
+    <label for="positionCode">Kode Jabatan:</label>
+    <input type="text" id="positionCode" name="positionCode" required>
+
+    <label for="positionName">Nama Jabatan:</label>
+    <input type="text" id="positionName" name="positionName" required>
+
+    <label for="positionDescription">Deskripsi Jabatan:</label>
+    <input type="text" id="positionDescription" name="positionDescription" required>
+
+    <label for="positionPeriod">Periode Jabatan (Tahun):</label>
+    <input type="number" id="positionPeriod" name="positionPeriod" required>
+
+    <input type="submit" value="Simpan Jabatan">
+</form>
+
+<script>
+    let positions = JSON.parse(localStorage.getItem('positions')) || [];
+    const positionTable = document.getElementById('positionTable').getElementsByTagName('tbody')[0];
+
+    // Fungsi untuk memperbarui tabel
+    function updateTable() {
+        positionTable.innerHTML = '';
+        positions.forEach((position, index) => {
+            const row = positionTable.insertRow();
+            row.insertCell().innerHTML = index + 1;
+            row.insertCell().innerHTML = position.code;
+            row.insertCell().innerHTML = position.name;
+            row.insertCell().innerHTML = position.description;
+            row.insertCell().innerHTML = position.period;
+            const actionCell = row.insertCell();
+            actionCell.className = 'action-buttons';
+            const editButton = document.createElement('button');
+            editButton.innerHTML = 'Edit';
+            editButton.addEventListener('click', function() {
+                editPosition(index);
+            });
+            actionCell.appendChild(editButton);
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = 'Hapus';
+            deleteButton.addEventListener('click', function() {
+                deletePosition(index);
+            });
+            actionCell.append (deleteButton);
+        });
+    }
+
+    // Fungsi untuk menyimpan jabatan
+    document.getElementById('positionForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const index = document.getElementById('index').value;
+
+        const newPosition = {
+            code: document.getElementById('positionCode').value,
+            name: document.getElementById('positionName').value,
+            description: document.getElementById('positionDescription').value,
+            period: document.getElementById('positionPeriod').value
+        };
+
+        if (index === "-1") {
+            positions.push(newPosition); // Tambah jabatan baru
+        } else {
+            positions[index] = newPosition; // Edit jabatan yang sudah ada
+        }
+
+        localStorage.setItem('positions', JSON.stringify(positions)); // Simpan
+        updateTable(); // Perbarui tabel
+        resetForm(); // Reset formulir
+    });
+
+    // Fungsi untuk mengedit jabatan
+    function editPosition(index) {
+        const position = positions[index];
+        document.getElementById('index').value = index;
+        document.getElementById('positionCode').value = position.code;
+        document.getElementById('positionName').value = position.name;
+        document.getElementById('positionDescription').value = position.description;
+        document.getElementById('positionPeriod').value = position.period;
+    }
+
+    // Fungsi untuk menghapus jabatan
+    function deletePosition(index) {
+        positions.splice(index, 1);
+        localStorage.setItem('positions', JSON.stringify(positions)); // Simpan
+        updateTable(); // Perbarui tabel
+    }
+
+    // Fungsi untuk mereset formulir
+    function resetForm() {
+        document.getElementById('index').value = "-1";
+        document.getElementById('positionCode').value = "";
+        document.getElementById('positionName').value = "";
+        document.getElementById('positionDescription').value = "";
+        document.getElementById('positionPeriod').value = "";
+    }
+
+    // Fungsi untuk mengarahkan ke dashboard
+    function goToDashboard() {
+        window.location.href = "index.html"; // Ganti dengan URL dashboard yang diinginkan
+    }
+
+    updateTable(); // Perbarui tabel saat pertama kali di-load
+</script>
+
+</body>
+</html>

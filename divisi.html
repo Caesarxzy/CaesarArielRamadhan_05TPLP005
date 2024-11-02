@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Divisi Perusahaan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"], button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        input[type="submit"]:hover, button:hover {
+            background-color: #45a049;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Data Divisi Perusahaan</h1>
+
+<!-- Tombol Kembali ke Dashboard -->
+<button onclick="goToDashboard()">Kembali ke Dashboard</button>
+
+<h2>Pilih Divisi</h2>
+<select id="divisionSelect" onchange="selectDivision()">
+    <option value="">Pilih Divisi</option>
+    <!-- Opsi divisi akan ditambahkan di sini -->
+</select>
+
+<table id="divisionTable">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Kode Divisi</th>
+            <th>Nama Divisi</th>
+            <th>Deskripsi Divisi</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Data Divisi akan ditambahkan di sini -->
+    </tbody>
+</table>
+
+<h2>Formulir Tambah/Edit Divisi</h2>
+<form id="divisionForm">
+    <input type="hidden" id="index" name="index" value="-1">
+    <label for="divisionCode">Kode Divisi:</label>
+    <input type="text" id="divisionCode" name="divisionCode" required>
+
+    <label for="divisionName">Nama Divisi:</label>
+    <input type="text" id="divisionName" name="divisionName" required>
+
+    <label for="divisionDescription">Deskripsi Divisi:</label>
+    <input type="text" id="divisionDescription" name="divisionDescription" required>
+
+    <input type="submit" value="Simpan Divisi">
+</form>
+
+<script>
+    let divisions = JSON.parse(localStorage.getItem('divisions')) || [];
+    const divisionTable = document.getElementById('divisionTable').getElementsByTagName('tbody')[0];
+    const divisionSelect = document.getElementById('divisionSelect');
+
+    // Fungsi untuk memperbarui tabel
+    function updateTable() {
+        divisionTable.innerHTML = '';
+        divisionSelect.innerHTML = '<option value="">Pilih Divisi</option>'; // Reset select options
+        divisions.forEach((division, index) => {
+            const row = divisionTable.insertRow();
+            row.insertCell().innerHTML = index + 1;
+            row.insertCell().innerHTML = division.code;
+            row.insertCell().innerHTML = division.name;
+            row.insertCell().innerHTML = division.description;
+            const actionCell = row.insertCell();
+            actionCell.className = 'action-buttons';
+            const editButton = document.createElement('button');
+            editButton.innerHTML = 'Edit';
+            editButton.addEventListener('click', function() {
+                editDivision(index);
+            });
+            actionCell.appendChild(editButton);
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = 'Hapus';
+            deleteButton.addEventListener('click', function() {
+                deleteDivision(index);
+            });
+            actionCell.appendChild(deleteButton);
+
+            // Tamb ahan opsi divisi ke select
+            const option = document.createElement('option');
+            option.value = division.code;
+            option.text = division.name;
+            divisionSelect.appendChild(option);
+        });
+    }
+
+    // Fungsi untuk menyimpan divisi
+    document.getElementById('divisionForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const index = document.getElementById('index').value;
+
+        const newDivision = {
+            code: document.getElementById('divisionCode').value,
+            name: document.getElementById('divisionName').value,
+            description: document.getElementById('divisionDescription').value
+        };
+
+        if (index === "-1") {
+            divisions.push(newDivision); // Tambah divisi baru
+        } else {
+            divisions[index] = newDivision; // Edit divisi yang sudah ada
+        }
+
+        localStorage.setItem('divisions', JSON.stringify(divisions)); // Simpan
+        updateTable(); // Perbarui tabel
+        resetForm(); // Reset formulir
+    });
+
+    // Fungsi untuk mengedit divisi
+    function editDivision(index) {
+        const division = divisions[index];
+        document.getElementById('index').value = index;
+        document.getElementById('divisionCode').value = division.code;
+        document.getElementById('divisionName').value = division.name;
+        document.getElementById('divisionDescription').value = division.description;
+    }
+
+    // Fungsi untuk menghapus divisi
+    function deleteDivision(index) {
+        divisions.splice(index, 1);
+        localStorage.setItem('divisions', JSON.stringify(divisions)); // Simpan
+        updateTable(); // Perbarui tabel
+    }
+
+    // Fungsi untuk mereset formulir
+    function resetForm() {
+        document.getElementById('index').value = "-1";
+        document.getElementById('divisionCode').value = "";
+        document.getElementById('divisionName').value = "";
+        document.getElementById('divisionDescription').value = "";
+    }
+
+    // Fungsi untuk memilih divisi
+    function selectDivision() {
+        const selectedDivision = divisionSelect.value;
+        // Lakukan aksi ketika divisi dipilih
+        console.log(`Divisi ${selectedDivision} dipilih`);
+    }
+
+    // Fungsi untuk mengarahkan ke dashboard
+    function goToDashboard() {
+        window.location.href = 'index.html'; // Ganti dengan URL dashboard yang diinginkan
+    }
+
+    updateTable(); // Perbarui tabel saat pertama kali di-load
+</script>
+
+</body>
+</html>

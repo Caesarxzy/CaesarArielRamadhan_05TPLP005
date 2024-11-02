@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Absensi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .hadir {
+            background-color: #d4edda; /* Warna hijau muda untuk hadir */
+            color: #155724; /* Warna teks hijau gelap */
+        }
+        .tidak-hadir {
+            background-color: #f8d7da; /* Warna merah muda untuk tidak hadir */
+            color: #721c24; /* Warna teks merah gelap */
+        }
+    </style>
+</head>
+<body>
+
+<h1>Menu Absensi</h1>
+
+<!-- Tombol Kembali ke Dashboard -->
+<button onclick="goToDashboard()">Kembali ke Dashboard</button>
+
+<table id="attendanceTable">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>Status Kehadiran</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Data Absensi akan ditambahkan di sini -->
+    </tbody>
+</table>
+
+<script>
+    // Data absensi awal untuk 10 orang
+    let attendanceData = [
+        { name: "Adji", status: "Hadir" },
+        { name: "Ilyas", status: "Tidak Hadir" },
+        { name: "Gita", status: "Hadir" },
+        { name: "Fajar", status: "Hadir" },
+        { name: "Eka", status: "Tidak Hadir" },
+        { name: "Prabowo", status: "Hadir" },
+        { name: "Amin", status: "Hadir" },
+        { name: "Hendra", status: "Tidak Hadir" },
+        { name: "Jessica", status: "Hadir" },
+        { name: "Joko", status: "Izin" }
+    ];
+
+    const attendanceTable = document.getElementById('attendanceTable').getElementsByTagName('tbody')[0];
+
+    // Fungsi untuk memperbarui tabel
+    function updateTable() {
+        attendanceTable.innerHTML = '';
+        attendanceData.forEach((person, index) => {
+            const row = attendanceTable.insertRow();
+            row.insertCell().innerHTML = index + 1;
+            row.insertCell().innerHTML = person.name;
+            const statusCell = row.insertCell();
+            statusCell.innerHTML = person.status;
+            statusCell.className = person.status === "Hadir" ? "hadir" : "tidak-hadir"; // Menambahkan kelas berdasarkan status
+            const actionCell = row.insertCell();
+            const toggleButton = document.createElement('button');
+            toggleButton.innerHTML = person.status === "Hadir" ? "Tandai Tidak Hadir" : "Tandai Hadir";
+            toggleButton.addEventListener('click', function() {
+                toggleAttendance(index);
+            });
+            actionCell.appendChild(toggleButton);
+        });
+    }
+
+    // Fungsi untuk mengubah status kehadiran
+    function toggleAttendance(index) {
+        attendanceData[index].status = attendanceData[index].status === "Hadir" ? "Tidak Hadir" : "Hadir";
+        updateTable(); // Perbarui tabel setelah mengubah status
+    }
+
+    // Fungsi untuk mengarahkan ke dashboard
+    function goToDashboard() {
+        window.location.href = "index.html" ; // Ganti dengan URL dashboard yang diinginkan
+    }
+
+    // Memperbarui tabel saat pertama kali di-load
+    updateTable();
+</script>
+
+</body>
+</html>
